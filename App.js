@@ -1,20 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as Font from 'expo-font';
+import { useState } from "react";
+import AppLoading from 'expo-app-loading';
+import Navigator from './routes/Drawer';
+
+const getFonts = async () => {
+  try {
+    await Font.loadAsync({
+      'montserrat-regular': require('./assets/fonts/Montserrat-Regular.ttf'),
+      'montserrat-bold': require('./assets/fonts/Montserrat-Bold.ttf'),
+      'montserrat-semibold': require('./assets/fonts/Montserrat-SemiBold.ttf')
+    });
+    // Fonts loaded successfully
+    return true;
+  } catch (error) {
+    console.error('Error loading fonts:', error);
+    // Handle the error as needed
+    return false;
+  }
+};
+
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if(fontsLoaded) {
+    return (
+      <Navigator />
+    );
+  }
+  else {
+    return (
+      <AppLoading 
+        startAsync = {getFonts}
+        onError={console.warn}
+        onFinish = {() => setFontsLoaded(true)}
+      />
+    );
+  }
+}
